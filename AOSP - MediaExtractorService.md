@@ -27,6 +27,8 @@ MediaExtractorPluginApi.h针对MediaExtractorFactory，定义了CMediaTrack,CMed
 
 MediaExtractorPluginHelper.h针对so的数据转换。
 
+**so的实现**：Android/frameworks/av/media/module/extractors/
+
 # Version
 <img width="1057" height="529" alt="image" src="https://github.com/user-attachments/assets/a0ad5188-5658-44d6-8547-1d24b832811e" />
 
