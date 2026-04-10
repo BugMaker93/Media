@@ -17,7 +17,7 @@ sp<IMediaExtractor> MediaExtractorFactory::CreateFromService(
 ```
 
 # ExtractorPlugin
-refer to
+refer to [AOSP - 加载so.md](https://github.com/BugMaker93/Media/blob/main/AOSP%20-%20%E5%8A%A0%E8%BD%BDso.md)
 
 ExtractorPlugin在MediaExtractorFactory中定义。
 
