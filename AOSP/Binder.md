@@ -1,7 +1,7 @@
 ## structure
 >为了IPC通信
 
-<img width="1470" height="829" alt="image" src="https://github.com/user-attachments/assets/eeb9f744-ba25-4573-9a77-77caa438ff15" />
+<img width="1470" height="829" alt="image" src="https://github.com/user-attachments/assets/2a003463-e117-4c6a-b213-a52e1901cc26" />
 
 ## case
 
