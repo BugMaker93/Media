@@ -1,5 +1,3 @@
-# class
-
 # launch MediaPlayerService
 >android/frameworks/av/media/mediaserver/main_mediaserver.cpp
 
