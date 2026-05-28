@@ -20,7 +20,8 @@ CCodec的注册service：main_swcodecservice.cpp
 
 <img width="1611" height="815" alt="image" src="https://github.com/user-attachments/assets/b35e5b8a-0e16-450a-9a99-cae10a2a9a4a" />
 
-
+## ComponentModule/ComponentLoader
+ComponentLoader中有所以ccodec.so,以ComponentLoader形式对外部提供。
 
 # 没有整理！！！
 
