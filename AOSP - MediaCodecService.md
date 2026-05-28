@@ -157,7 +157,7 @@ class OutputBuffersArray : public OutputBuffers {
 ```
 
 ## 创建GraphicInputBuffers.Entry.Codec2Buffer
->内部预创建的Entry.Codec2Buffer，为了MediaCodec.mPortBuffers/mAvailPortBuffers，即为了外部dequeueInputBuffers()时能获取index。
+内部预创建的Entry.Codec2Buffer，为了MediaCodec.mPortBuffers/mAvailPortBuffers，即为了外部dequeueInputBuffers()时能获取index。
 
 ```
 CCodec::initiateStart()
@@ -172,7 +172,7 @@ MediaCodec::onInputBufferAvailable()
 ```
 
 ## 创建InputBuffersArray.Entry
->内部创建真正的Entry.Codec2Buffer，外部getInputBuffers()返回的是这个。
+内部创建真正的Entry.Codec2Buffer，外部getInputBuffers()返回的是这个。
 
 ```
 CCodecBufferChannel::getInputBufferArray()
@@ -184,7 +184,7 @@ BuffersArrayImpl::getArray()
 ```
 
 ## 填充InputBuffersArray.Entry
->外部填充了Entry.Codec2Buffer后，内部转成Entry.C2Buffer，并送到Service进行处理。
+外部填充了Entry.Codec2Buffer后，内部转成Entry.C2Buffer，并送到Service进行处理。
 
 ```
 CCodecBufferChannel::queueInputBufferInternal()
@@ -244,4 +244,95 @@ MediaCodec::onReleaseOutputBuffer()
 CCodecBufferChannel::discardBuffer()/CCodecBufferChannel::renderOutputBuffer()
 OutputBuffersArray::releaseBuffer()
 BuffersArrayImpl::returnBuffer()
+```
+
+# ps
+
+## PipelineWatcher作用
+>作用在InputBuffer，和OutputBuffer无关
+
+BuffersArrayImpl和FlexBuffersImpl中C2Buffer是**弱引用**，C2Buffer是否expired取决于外部强引用。PipelineWatcher则以强引用持有这个弱引用。
+
+需关注
+
+- 上面个流程中PipelineWatcher::onWorkQueued()/PipelineWatcher：：onWorkDone()时机
+
+- CCodecBufferChannel::feedInputBufferIfAvailableInternal()中通过PipelineWatcher控制速度
+
+## ownedByClientt
+
+| type | ownedByClient=true | ownedByClient=false |
+|---|---|---|
+| InputBuffersArray | 可供外部使用。外部需要填充。 | 外部已经使用完毕。外部填充完毕，内部需要消费。 |
+| OutputBuffersArray | 可供外部使用。内部填充完毕，外部需要消费。 | 外部已经使用完毕。外部消费完毕，内部需要再次填充。 |
+
+## C2PlatformComponentStore::ComponentModule::init
+dlopen加载so点地方
+
+<img width="1481" height="1605" alt="image" src="https://github.com/user-attachments/assets/4303a240-3b61-4cc7-9e55-c760ec0296fa" />
+
+Android\frameworks\av\media\codec2\vndk\C2Store.cpp
+
+## OutputBuffers中mReorderStash和mPending的作用
+```
+// 数据流向图
+Codec --|-> mReorderStash --> mPending --|-> slots --|-> client
+        |                                |           |
+  pushToStash()                    popFromStashAndRegister()
+```
+
+```
+// 缓冲区条目结构
+struct StashEntry {
+    std::shared_ptr<C2Buffer> buffer;    // C2Buffer数据
+    bool notify;                         // 是否通知客户端
+    int64_t timestamp;                   // 时间戳
+    int32_t flags;                       // 标志位
+    sp<AMessage> format;                 // 格式信息
+    C2WorkOrdinalStruct ordinal;         // 排序键值
+};
+
+// 两个关键成员
+std::list<StashEntry> mPending;          // FIFO队列，无大小限制
+std::list<StashEntry> mReorderStash;     // 有序列表，有大小限制
+uint32_t mDepth{0};                      // mReorderStash的大小限制
+C2Config::ordinal_key_t mKey{C2Config::ORDINAL}; // 排序键类型
+```
+
+```
+void OutputBuffers::pushToStash(
+        const std::shared_ptr<C2Buffer>& buffer,
+        bool notify,
+        int64_t timestamp,
+        int32_t flags,
+        const sp<AMessage>& format,
+        const C2WorkOrdinalStruct& ordinal) {
+    
+    // 查找插入位置 - 维持有序
+    auto it = mReorderStash.begin();
+    for (; it != mReorderStash.end(); ++it) {
+        if (less(ordinal, it->ordinal)) {  // 按ordinal排序
+            break;
+        }
+    }
+    // 有序插入
+    mReorderStash.emplace(it, buffer, notify, timestamp, flags, format, ordinal);
+    
+    // 溢出处理 - 超过深度限制时移到mPending
+    while (!mReorderStash.empty() && mReorderStash.size() > mDepth) {
+        mPending.push_back(mReorderStash.front());
+        mReorderStash.pop_front();
+    }
+}
+```
+
+```
+// 编码顺序: I0 P3 B1 B2 P6 B4 B5
+// 显示顺序: I0 B1 B2 P3 B4 B5 P6
+
+pushToStash(I0, ordinal.frameIndex=0);
+pushToStash(P3, ordinal.frameIndex=3);  // 进入mReorderStash，排序
+pushToStash(B1, ordinal.frameIndex=1);  // 插入到正确位置
+pushToStash(B2, ordinal.frameIndex=2);  // 有序插入
+// mReorderStash: [I0, B1, B2, P3] (按frameIndex排序)
 ```
