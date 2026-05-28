@@ -5,7 +5,7 @@ CCodec的注册service：main_swcodecservice.cpp
 
 <img width="890" height="398" alt="image" src="https://github.com/user-attachments/assets/c8598ea7-91d8-43de-895e-487ad38b7fa6" />
 
-现在使用的是CCodec。
+现在使用的是CCodec。**so的实现**：Android/frameworks/av/media/codec2/components/...
 
 # launch CCodec
 
