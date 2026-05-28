@@ -20,6 +20,8 @@ CCodec的注册service：main_swcodecservice.cpp
 
 <img width="1611" height="815" alt="image" src="https://github.com/user-attachments/assets/b35e5b8a-0e16-450a-9a99-cae10a2a9a4a" />
 
+硬解一定会继承C2Component，Qcom不会提供硬解的源码，samsung源码在：Android/hardware/samsung_slsi/codec2/...
+
 ## ComponentModule/ComponentLoader
 ComponentLoader中有所以ccodec.so,以ComponentLoader形式对外部提供。
 
