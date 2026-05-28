@@ -8,6 +8,7 @@
 <img width="1179" height="669" alt="image" src="https://github.com/user-attachments/assets/50f90436-f9c0-4613-b549-35bf61f0b56b" />
 
 # prepare()
+>libstagefright中MediaExtractorFactory是MediaPlayer和MediaExtractor的分界点。
 
 <img width="8481" height="4871" alt="image" src="https://github.com/user-attachments/assets/5280c409-7333-4fd1-b7ab-ad7c2ccf5618" />
 
