@@ -3,6 +3,8 @@
 
 <img width="1413" height="588" alt="image" src="https://github.com/user-attachments/assets/fec2b3f2-d726-4c25-91f4-de37f842d6ca" />
 
+**so的实现**：Android/frameworks/av/media/module/extractors/...
+
 ## IMediaExtractorService
 
 <img width="1179" height="669" alt="image" src="https://github.com/user-attachments/assets/50f90436-f9c0-4613-b549-35bf61f0b56b" />
