@@ -52,4 +52,4 @@ onInputBufferAvailable()：MediaCodec可以给codec decode前数据。
 onOutputBufferAvailable()：codec有decode后数据给MediaCodec。
 
 
-后续refer to 
+后续refer to [AOSP - MediaCodecService.md](https://github.com/BugMaker93/Media/blob/main/AOSP%20-%20MediaCodecService.md)
