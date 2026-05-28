@@ -14,12 +14,14 @@ refer to [setDataSource.md](https://github.com/BugMaker93/Media/blob/main/setDat
 
 # prepare
 
-涉及MediaExtractor，libstagefright中MediaExtractorFactory是MediaPlayer和MediaExtractor的分界点。
+涉及Extractor，libstagefright中MediaExtractorFactory是MediaPlayer和Extractor的分界点。
 
-refer to [MediaExtractor.md](https://github.com/BugMaker93/Media/blob/main/MediaExtractor.md)
+refer to [Extractor.md](https://github.com/BugMaker93/Media/blob/main/Extractor.md)
 
 # start
 
-涉及C2Codec，libstagefright中MediaCodec是MediaPlayer和C2Codec的分界点。
+涉及Codec，libstagefright中MediaCodec是MediaPlayer和Codec的分界点。
+
+refer to 
 
 
