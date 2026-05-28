@@ -22,6 +22,6 @@ refer to [Extractor.md](https://github.com/BugMaker93/Media/blob/main/Extractor.
 
 涉及Codec，libstagefright中MediaCodec是MediaPlayer和Codec的分界点。
 
-refer to 
+refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
 
 
