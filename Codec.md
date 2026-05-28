@@ -1,3 +1,27 @@
+# ACodec/CCodec
+OMX的注册service：main_codecservice.cpp
+
+CCodec的注册service：main_swcodecservice.cpp
+
+<img width="890" height="398" alt="image" src="https://github.com/user-attachments/assets/c8598ea7-91d8-43de-895e-487ad38b7fa6" />
+
+现在使用的是CCodec。
+
+# launch CCodec
+
+<img width="1960" height="847" alt="image" src="https://github.com/user-attachments/assets/24abad31-02a5-4e4b-91e9-c644430d650c" />
+
+## IComponentStore
+>用于IPC
+
+<img width="1252" height="745" alt="image" src="https://github.com/user-attachments/assets/b7df1347-2d8d-40d0-8055-fa0882a5c1db" />
+
+## C2Component
+
+<img width="1611" height="815" alt="image" src="https://github.com/user-attachments/assets/b35e5b8a-0e16-450a-9a99-cae10a2a9a4a" />
+
+
+
 # 没有整理！！！
 
 
