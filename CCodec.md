@@ -1,0 +1,2 @@
+Codec2Client代理ComponentStore:IComponentStore代理C2PlatformComponentStore:C2ComponentStore
+Codec2Client::Component代理Component：IComponent代理C2SoftRawDec：SimpleC2Component：C2Component
