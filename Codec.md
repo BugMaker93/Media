@@ -25,6 +25,20 @@ CCodec的注册service：main_swcodecservice.cpp
 ## ComponentModule/ComponentLoader
 ComponentLoader中有所以ccodec.so,以ComponentLoader形式对外部提供。
 
+# start
+>libstagefright中MediaCodec是MediaPlayer和CCodec的分界点。
+
+prepare时MediaExtractor解复用的数据通过AnotherPacketSource.queueAccessUnit()存储在GenericSource。
+
+## onInputBufferAvailable
+- 通过CCodec.onInputBufferAvailable(),libstagefright得知CCodec需要获得解复用的数据。
+
+- GenericSource通过AnotherPacketSource.dequeueAccessUnit()，把解复用数据给到CCodec。
+
+## out
+- 通过CCodec.onInputBufferAvailable()，libstagefright得知CCodec已经把解复用数据decode完成，并把decode完成的的数据传回来。
+
+
 # 没有整理！！！
 
 
