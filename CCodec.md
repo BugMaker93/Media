@@ -1,8 +1,6 @@
 # initiateAllocateComponent
 
-<img width="3750" height="1792" alt="image" src="https://github.com/user-attachments/assets/ba324d90-1edf-4ac4-b399-486359ed220a" />
-
-<img width="3569" height="1792" alt="image" src="https://github.com/user-attachments/assets/a47a0486-a49e-4012-b27d-cedbd7f73d59" />
+<img width="3569" height="1792" alt="image" src="https://github.com/user-attachments/assets/7b1e177c-5417-4989-afe6-e40b39510fef" />
 
 Codec2Client代理ComponentStore:IComponentStore代理C2PlatformComponentStore:C2ComponentStore。
 
@@ -16,7 +14,26 @@ Codec2Client::Component后续的调用没有画，会一路调到SimpleC2Compone
 
 # initiateStart
 
-## onInputBufferAvailable
+LinearInputBuffer中存储的是decode前数据，即解复用的数据。
 
+LinearOutputBuffers中存储时decode后的数据。
 
-## onOutputBufferAvailable
+LinearInputBuffer/LinearOutputBuffers/C2BlockPool涉及到buffer的转换，图会忽略。buffer具体如何转换refer to [C2BlockPool.md](https://github.com/BugMaker93/Media/blob/main/C2BlockPool.md)
+
+LinearInputBuffer的操作(releaseBuffer()/requestNewBuffer())对应onInputBufferAvailable()。
+
+LinearOutputBuffers的操作(pushToStash()/popFromStashAndRegister())对应onOutputBufferAvailable()。
+
+CCodecBufferChannel：：queueInputBufferInternal()其实会同时操作LinearInputBuffer和LinearOutputBuffers，只是分开画了。
+
+## onInputBufferAvailable(initiateStart)
+
+<img width="2766" height="1401" alt="image" src="https://github.com/user-attachments/assets/18fa86e0-0475-4994-a2cf-a9bc64a31b73" />
+
+## onOutputBufferAvailable(queueInputBuffer)
+
+<img width="1555" height="801" alt="image" src="https://github.com/user-attachments/assets/28c12c7d-9908-4dfa-9763-5f0bacded5d1" />
+
+Codec2Client::Component后续的调用没有画，会一路调到SimpleC2Component中。refer to initiateAllocateComponent中的代理。
+
+这里queue的目的就是调到SimpleC2Component，通过onWorkDone去获得decode后数据。
