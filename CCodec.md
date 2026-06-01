@@ -32,7 +32,7 @@ CCodecBufferChannel：：queueInputBufferInternal()其实会同时操作LinearIn
 
 ## onOutputBufferAvailable(queueInputBuffer)
 
-<img width="1555" height="801" alt="image" src="https://github.com/user-attachments/assets/28c12c7d-9908-4dfa-9763-5f0bacded5d1" />
+<img width="1607" height="823" alt="image" src="https://github.com/user-attachments/assets/00a69268-e620-422d-b7df-d4a1b47b3936" />
 
 Codec2Client::Component后续的调用没有画，会一路调到SimpleC2Component中。refer to initiateAllocateComponent中的代理。
 
