@@ -18,7 +18,7 @@ LinearInputBuffer中存储的是decode前数据，即解复用的数据。
 
 LinearOutputBuffers中存储时decode后的数据。
 
-LinearInputBuffer/LinearOutputBuffers/C2BlockPool涉及到buffer的转换，图会忽略。buffer具体如何转换refer to [C2BlockPool.md](https://github.com/BugMaker93/Media/blob/main/C2BlockPool.md)
+LinearInputBuffer/LinearOutputBuffers/C2BlockPool涉及到buffer的转换，图会忽略。buffer具体如何转换refer to [CCodec - Buffer.md](https://github.com/BugMaker93/Media/blob/main/CCodec%20-%20Buffer.md)
 
 LinearInputBuffer的操作(releaseBuffer()/requestNewBuffer())对应onInputBufferAvailable()。
 
