@@ -28,69 +28,63 @@ ComponentLoader中有所以ccodec.so,以ComponentLoader形式对外部提供。
 # start
 >libstagefright中MediaCodec是MediaPlayer和CCodec的分界点。
 
+<img width="3757" height="2427" alt="image" src="https://github.com/user-attachments/assets/21bca2f0-a31c-4ae9-a3cd-dd4ea28c90bb" />
+
 prepare时MediaExtractor解复用的数据通过AnotherPacketSource.queueAccessUnit()存储在GenericSource。
 
 ## onInputBufferAvailable
-- 通过CCodec.onInputBufferAvailable(),libstagefright得知CCodec需要获得解复用的数据。
+- 通过onInputBufferAvailable(),libstagefright得知CCodec需要获得解复用的数据。
 
 - GenericSource通过AnotherPacketSource.dequeueAccessUnit()，把解复用数据给到CCodec。
 
-## out
-- 通过CCodec.onInputBufferAvailable()，libstagefright得知CCodec已经把解复用数据decode完成，并把decode完成的的数据传回来。
+<img width="1611" height="1165" alt="image" src="https://github.com/user-attachments/assets/4637f47d-2148-4e50-9bdc-293fd1539fad" />
 
+onInputBufferAvailable()怎么来的？queueInputBuffer()是怎么触发onOutputBufferAvailable()的？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
 
-# 没有整理！！！
+## onOutputBufferAvailable
+- 通过onOutputBufferAvailable()，libstagefright得知CCodec已经把解复用数据decode完成，并把decode完成的的数据传回来。
 
+<img width="2042" height="2569" alt="image" src="https://github.com/user-attachments/assets/e43954cb-9cbc-4fa9-8927-94ee709879a0" />
 
+onOutputBufferAvailable()怎么来的？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
 
-<img width="2469" height="3840" alt="image" src="https://github.com/user-attachments/assets/1cb7076a-3068-4037-b501-3fcc7734065b" />
+Audio会call到AudioTrack。Video会call到IGraphicBufferProducer。IGraphicBufferProducer后续流程refer to [Graphic.md](https://github.com/BugMaker93/Media/blob/main/Graphic.md)
 
-<img width="2377" height="2333" alt="image" src="https://github.com/user-attachments/assets/5a1ff9a5-00ad-4d73-849b-c348a3591865" />
+# class
 
+## NuPlayerDecoder:NuPlayerDecoderBase
+NuPlayerDecoder和CCodec IPC通信。NuPlayerDecoder事件会回调给NuPlayerRender。也会和NuPlayerRender通信。
 
+NuPlayerDecoder解码出一帧buffer，调用NuPlayerRender::queueBuffer()，并传入一个notifyConsumed 消息（AMessage），这个消息的handler是NuPlayerDecoder。
 
-# NuPlayerDecoder:NuPlayerDecoderBase
-Decoder和Codec IPC通信。Decoder事件会回调给NuPlayer。也会和Render通信。
+NuPlayerRender渲染完该帧后，调用 entry->mNotifyConsumed->post()，即把消息发回NuPlayerDecoder。
 
-Decoder 解码出一帧 buffer，调用 Renderer::queueBuffer()，并传入一个 notifyConsumed 消息（AMessage），这个消息的 handler 是解码器自己。
-
-Renderer 渲染完该帧后，调用 entry->mNotifyConsumed->post()，即把消息发回解码器。
-
-Decoder 收到该消息后，执行 buffer 释放、解码下一个帧等后续操作。
+NuPlayerDecoder收到该消息后，执行buffer释放、解码下一个帧等后续操作。
 
 NuPlayer::instantiateDecoder()：创建Decoder的位置。
 
-# NuPlayerRender
-Render事件会回调给NuPlayer。也会如上和Decoder通信。
+## NuPlayerRender
+NuPlayerRender事件会回调给NuPlayer。也会和NuPlayerDecoder通信。
 
-
-
-Renderer 负责将解码后的音频数据送到音频输出设备（如 AudioSink），将视频帧送到显示表面（如 Surface），并确保音视频同步播放。
+NuPlayerRender负责将解码后的音频数据送到音频输出设备（如 AudioSink），将视频帧送到显示表面（如 Surface），并确保音视频同步播放。
 
 对于视频输出：NuPlayer::Renderer::onQueueBuffer()->NuPlayer::Renderer::postDrainVideoQueue()->NuPlayer::Renderer::onDrainVideoQueue()->MediaCodec::renderOutputBufferAndRelease()->Android-Graphic
 
 对于音频输出：NuPlayer::Renderer::onQueueBuffer()->NuPlayer::Renderer::postDrainAudioQueue_l()->NuPlayer::Renderer::onDrainAudioQueue()->AudioSink::write()
 
+NuPlayerRender通常维护一个媒体时钟（MediaClock），用于协调音视频帧的输出时序，实现精准同步。
 
+NuplayerRender记录写入多少Audio数据，从AudioSink获取当前Audio时间戳信息，向MediaClock打入锚点信息，视频以此时间计算Render时间，如果视频帧的render过时40ms，render标记置为false，该帧将被discard。
 
-Renderer 通常维护一个媒体时钟（MediaClock），用于协调音视频帧的输出时序，实现精准同步。
+## NuplayerCCDecoder
+NuplayerCCDecoder只有Video有。
 
-NuplayerRender记录写入多少Audio数据，从AudioSink获取当前Audio时间戳信息，向MediaClock打入锚点信息，视频以此时间计算Render时间，如果视频帧的render过时40ms，render标记置为false，该帧将被discard。对于Audio buffer，调用MediaCodec releaseOutputBuffer，直接discard掉。
+NuplayerCCDecoder负责解码和处理视频流中的隐藏字幕（Closed Caption，CC）数据，将其提取出来并在需要时显示在屏幕上。
 
-# NuplayerCCDecoder
-CCDecoder 只有Video有。
+NuplayerCCDecoder需要解析视频帧中的特定数据区（如 SEI、user data、VBI 等）来提取字幕信息。
 
-CCDecoder 负责解码和处理视频流中的隐藏字幕（Closed Caption，CC）数据，将其提取出来并在需要时显示在屏幕上。
+## MediaCodec：：onInputBufferAvailable()/onOutputBufferAvailable()
 
-CCDecoder 需要解析视频帧中的特定数据区（如 SEI、user data、VBI 等）来提取字幕信息。
+onInputBufferAvailable()：MediaCodec给CCodec **decode前**数据。
 
-
-
-# MediaCodec：：onInputBufferAvailable()/onOutputBufferAvailable()
-
-onInputBufferAvailable()：MediaCodec可以给codec decode前数据。
-
-onOutputBufferAvailable()：codec有decode后数据给MediaCodec。
-
-
-后续refer to [AOSP - MediaCodecService.md](https://github.com/BugMaker93/Media/blob/main/AOSP%20-%20MediaCodecService.md)
+onOutputBufferAvailable()：CCode把**decode后**数据给MediaCodec。
