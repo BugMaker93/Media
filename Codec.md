@@ -41,14 +41,14 @@ prepare时MediaExtractor解复用的数据通过AnotherPacketSource.queueAccessU
 
 CCodecCallbackImpl：CCodecCallback的作用是通过CCodec调用到MediaCodec::CodecCallback：CodecBase::CodecCallback。
 
-onInputBufferAvailable()怎么来的？queueInputBuffer()是怎么触发onOutputBufferAvailable()的？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
+onInputBufferAvailable()怎么来的？onInputBufferAvailable()中的buffer转换？queueInputBuffer()是怎么触发onOutputBufferAvailable()的？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
 
 ## onOutputBufferAvailable
 - 通过onOutputBufferAvailable()，libstagefright得知CCodec已经把解复用数据decode完成，并把decode完成的的数据传回来。
 
 <img width="2042" height="2569" alt="image" src="https://github.com/user-attachments/assets/e43954cb-9cbc-4fa9-8927-94ee709879a0" />
 
-onOutputBufferAvailable()怎么来的？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
+onOutputBufferAvailable()怎么来的？onInputBufferAvailable()/onOutputBufferAvailable()完美闭环中buffer的转换？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
 
 Audio会call到AudioTrack。Video会call到IGraphicBufferProducer。IGraphicBufferProducer后续流程refer to [Graphic.md](https://github.com/BugMaker93/Media/blob/main/Graphic.md)
 
