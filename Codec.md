@@ -39,6 +39,8 @@ prepare时MediaExtractor解复用的数据通过AnotherPacketSource.queueAccessU
 
 <img width="1611" height="1165" alt="image" src="https://github.com/user-attachments/assets/4637f47d-2148-4e50-9bdc-293fd1539fad" />
 
+CCodecCallbackImpl：CCodecCallback的作用是通过CCodec调用到MediaCodec::CodecCallback：CodecBase::CodecCallback。
+
 onInputBufferAvailable()怎么来的？queueInputBuffer()是怎么触发onOutputBufferAvailable()的？refer to [Codec.md](https://github.com/BugMaker93/Media/blob/main/Codec.md)
 
 ## onOutputBufferAvailable
