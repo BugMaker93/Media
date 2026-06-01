@@ -36,4 +36,4 @@ CCodecBufferChannel：：queueInputBufferInternal()其实会同时操作LinearIn
 
 Codec2Client::Component后续的调用没有画，会一路调到SimpleC2Component中。refer to initiateAllocateComponent中的代理。
 
-这里queue的目的就是调到SimpleC2Component，通过onWorkDone去获得decode后数据。
+这里queue的目的就是调到SimpleC2Component，通过onWorkDone获得SimpleC2Component decode后数据。
