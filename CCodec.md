@@ -15,3 +15,8 @@ Codec2Client::Component代理Component：IComponent代理C2SoftRawDec：SimpleC2
 Codec2Client::Component后续的调用没有画，会一路调到SimpleC2Component中。refer to initiateAllocateComponent中的代理。
 
 # initiateStart
+
+## onInputBufferAvailable
+
+
+## onOutputBufferAvailable
